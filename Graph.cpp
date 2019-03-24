@@ -1,51 +1,47 @@
 #include "Graph.h"
 #include <fstream>
 
-Graph::Graph(size_t n)
+Graph::Graph(size_t n_vertices)
 { //just vertices with no edges
-    size = n;
-    vertices = new vertex *[n];
-    for (size_t i = 0; i < size; i++)
-    {
-        vertices[i] = new vertex;
-        vertices[i]->edges = new std::list<edge>;
-    }
+    matrix=new double*[n_vertices];
+    for(size_t i=0;i<n_vertices;i++)
+        matrix[i]=new double[n_vertices];
+
 }
 
 
-Graph::Graph(size_t n, std::string file_name){
+Graph::Graph(size_t n_vertices, std::string file_name){
     std::ifstream in;
     in.open(file_name, std::ios::in);
+    in.close();
 }
 
 Graph::~Graph()
 {
-    for (size_t i = 0; i < size; i++)
+    for (size_t i = 0; i < n_vertices; i++)
     {
-        delete vertices[i]->edges;
+        delete matrix[i];
     }
 
-    delete vertices;
+    delete matrix;
 }
 
 void Graph::addEdge(size_t u, size_t v, double w){
-        vertices[u]->edges->push_back(edge(v,w));
-        vertices[v]->edges->push_back(edge(u,w));
+        matrix[u][v]=w;
 }
 
 
 std::ostream &operator<<(std::ostream &out, const Graph &G)
 {
 
-    for (size_t i = 0; i < G.size; i++)
+    for (size_t i = 0; i < G.n_vertices; i++)
     {
         out << "Vertex " << i << " neighbours:";
-        typename std::list<edge>::iterator it;
-        for (it = G.vertices[i]->edges->begin(); it != G.vertices[i]->edges->end(); ++it)
-        {
-            out << " " << (*it).endNode;
+        for(size_t j=i;j<G.n_vertices;j++){
+            if(G.matrix[i][j]>0)
+                out<<" "<<j;
         }
-        out << '\n';
+        out<<std::endl;
     }
     return out;
 }
