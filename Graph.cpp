@@ -1,4 +1,5 @@
 #include "Graph.h"
+#include <fstream>
 
 Graph::Graph(size_t n)
 { //just vertices with no edges
@@ -11,7 +12,11 @@ Graph::Graph(size_t n)
     }
 }
 
-//TODO Graph() constructor reading from instream list of edges;
+
+Graph::Graph(size_t n, std::string file_name){
+    std::ifstream in;
+    in.open(file_name, std::ios::in);
+}
 
 Graph::~Graph()
 {
@@ -24,12 +29,8 @@ Graph::~Graph()
 }
 
 void Graph::addEdge(size_t u, size_t v, double w){
-    if(vertices[u]->edges->empty()){
         vertices[u]->edges->push_back(edge(v,w));
-    }
-    if(vertices[v]->edges->empty()){
         vertices[v]->edges->push_back(edge(u,w));
-    }
 }
 
 

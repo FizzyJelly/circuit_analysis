@@ -21,13 +21,13 @@ struct vertex
 class Graph
 {
 
-  protected: //leaving it protected for now
+  public: //leaving it public for now
     size_t size;
     vertex **vertices;
 
   public:
     Graph(size_t n); //just vertices with no edges
-    //TODO Graph() constructor reading from instream list of edges;
+    Graph(size_t n,std::string  file_name);
 
     ~Graph();
     void addEdge(size_t u, size_t v, double w); //u,v -> vertices; w -> weight
