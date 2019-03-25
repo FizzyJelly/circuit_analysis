@@ -4,6 +4,7 @@
 Graph::Graph(size_t n_vertices)
 { //just vertices with no edges
     this->n_vertices=n_vertices;
+    this->n_edges=0;
     matrix=new double*[n_vertices];
     for(size_t i=0;i<n_vertices;i++)
         matrix[i]=new double[n_vertices]();
@@ -18,6 +19,7 @@ Graph::Graph(size_t n_vertices, std::string file_name){
 }
 
 Graph::Graph(const Graph&g) : Graph(g.n_vertices){
+    this->n_edges=g.n_edges;
     for(size_t i=0;i<g.n_vertices;i++){
         for(size_t j=0;j<g.n_vertices;j++){
             matrix[i][j]=g.matrix[i][j];
@@ -38,11 +40,13 @@ Graph::~Graph()
 void Graph::addEdge(size_t u, size_t v, double w){
         matrix[u][v]=w;
         matrix[v][u]=w;
+        n_edges++;
 }
 
 void Graph::removeEdge(size_t u, size_t v){
         matrix[u][v]=0;
         matrix[v][u]=0;
+        n_edges--;
 }
 
 std::ostream &operator<<(std::ostream &out, const Graph &G)

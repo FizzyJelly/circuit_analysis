@@ -9,6 +9,7 @@ class Graph
 
   public: //leaving it public for now
     size_t n_vertices;
+    size_t n_edges;
     double** matrix; //weighted adjacency matrix
 
   public:
