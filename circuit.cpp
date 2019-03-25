@@ -137,13 +137,14 @@ edge* calculateCurrents(Graph* g,std::list<std::list<size_t>> baseCycles){
     for(size_t e=0;e<g->n_edges;e++){
         u=edges[e].u;
         v=edges[e].v;
+
+        //initially assume all currents are directed towards end with bigger index
         A(u,e)=1;
-        A(v,e)=1;
+        A(v,e)=-1;
     }
     //second Kirchhoff law
     A.row(g->n_edges-baseCycles.size()).zeros();
     size_t index=(g->n_edges)-baseCycles.size();
-    //A.print();
     for(auto it=baseCycles.begin();it!=baseCycles.end();it++){
         auto it2=it->begin();
         do{
@@ -151,9 +152,17 @@ edge* calculateCurrents(Graph* g,std::list<std::list<size_t>> baseCycles){
             v=*(++it2);
             if(it2!=it->end()){
             if(g->matrix[u][v]>0){
-            A(index,indexInEdgeArray(edges,u,v,g->n_edges))+=g->matrix[u][v];
+                if(u<v){
+                    A(index,indexInEdgeArray(edges,u,v,g->n_edges))=-g->matrix[u][v];
+                } else{
+                    A(index,indexInEdgeArray(edges,u,v,g->n_edges))=g->matrix[u][v];
+                }
             } else {
-                y(index)=-g->matrix[u][v];
+                if(u<v){
+                    y(index)=-g->matrix[u][v];
+                } else {
+                    y(index)=g->matrix[u][v];
+                }
             }}
         }while(it2!=it->end());
         std::cout<<std::endl;
@@ -177,7 +186,7 @@ edge* calculateCurrents(Graph* g,std::list<std::list<size_t>> baseCycles){
 
 int main(int argc, char const *argv [])
 {
-    Graph* G=new Graph(8);
+    Graph* G=new Graph(9);
     /*G->addEdge(0,1,1);
     G->addEdge(0,5,1);
     G->addEdge(1,2,1);
@@ -186,7 +195,7 @@ int main(int argc, char const *argv [])
     G->addEdge(3,4,1);
     G->addEdge(5,4,-1);*/
 
-    G->addEdge(0,1,1);
+    /*G->addEdge(0,1,1);
     G->addEdge(0,3,1);
     G->addEdge(0,7,-1);
     G->addEdge(1,2,1);
@@ -195,19 +204,19 @@ int main(int argc, char const *argv [])
     G->addEdge(5,4,-1);
     G->addEdge(6,4,-1);
     G->addEdge(6,7,-1);
-    G->addEdge(5,7,-1);
+    G->addEdge(5,7,-1);*/
 
-    /*G->addEdge(0,1,1);
+    G->addEdge(0,1,1);
     G->addEdge(1,2,1);
     G->addEdge(2,7,-1);
     G->addEdge(2,3,1);
     G->addEdge(3,4,1);
     G->addEdge(3,5,1);
     G->addEdge(4,5,1);
-    G->addEdge(5,6,2e-5);
-    G->addEdge(6,7,2e-5);
+    G->addEdge(5,6,1);
+    G->addEdge(6,7,1);
     G->addEdge(7,8,1);
-    G->addEdge(0,8,1);*/
+    G->addEdge(0,8,1);
 
     /*G->addEdge(0,1,1);
     G->addEdge(1,2,1);
@@ -235,14 +244,8 @@ int main(int argc, char const *argv [])
 
 
     std::list<std::list<size_t>>* cycles= &findBaseCycles(*G);
-    for(std::list<std::list<size_t>>::iterator it=cycles->begin();it!=cycles->end();it++){
-        std::cout<<"Cycle: ";
-        for(std::list<size_t>::iterator it2=it->begin();it2!=it->end();it2++)
-            std::cout<<std::left<<std::setw(3)<<*it2<<" ";
-        std::cout<<std::endl;
-    }
-    std::cout<<std::endl<<std::endl;
     edge* circuit=calculateCurrents(G,*cycles);
+    
     for(size_t i=0;i<G->n_edges;i++){
         std::cout<<circuit[i].u<<" "<<circuit[i].v<<" "<<circuit[i].current<<std::endl;
     }
