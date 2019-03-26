@@ -14,7 +14,7 @@ class Graph
 
   public:
     Graph(size_t vertices); //just vertices with no edges
-    Graph(size_t vertices,std::string  file_name);
+    Graph(const char* file_name);
     Graph(const Graph& g);//copy constructor
 
     ~Graph();

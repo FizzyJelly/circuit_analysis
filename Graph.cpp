@@ -12,10 +12,28 @@ Graph::Graph(size_t n_vertices)
 }
 
 
-Graph::Graph(size_t n_vertices, std::string file_name){
+Graph::Graph(const char* file_name){
     std::ifstream in;
     in.open(file_name, std::ios::in);
+    if(in.is_open()){
+    size_t V;
+    in >> V;
+
+    this->n_vertices=V;
+    this->n_edges=0;
+    matrix=new double*[n_vertices];
+    for(size_t i=0;i<n_vertices;i++)
+        matrix[i]=new double[n_vertices]();
+    
+    size_t u,v;
+    double r;
+    while(in >> u >> v >> r){
+        this->addEdge(u,v,r);
+    }
     in.close();
+    } else {
+        throw std::logic_error("Cannot read graph from given file");
+    }
 }
 
 Graph::Graph(const Graph&g) : Graph(g.n_vertices){
